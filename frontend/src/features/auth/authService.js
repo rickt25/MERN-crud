@@ -9,6 +9,7 @@ class AuthService {
       password,
     });
     if (response.data.accessToken) {
+      // TODO : localStorage is not safe! needs refactor
       localStorage.setItem("user", JSON.stringify(response.data));
     }
     return response.data;
