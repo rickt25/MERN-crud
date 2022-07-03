@@ -2,11 +2,12 @@ import axiosApi from '../../config/axios.js';
 import axios from 'axios';
 
 class AuthService {
-  async register(name, email, password) {
+  async register(user) {
     const response = await axiosApi.post("register", {
-      name,
-      email,
-      password,
+      name: user.name,
+      email: user.email,
+      password: user.password,
+      confirm_password: user.confirm_password
     });
     if (response.data.accessToken) {
       // TODO : localStorage is not safe! needs refactor
@@ -27,14 +28,7 @@ class AuthService {
   async logout() {
     localStorage.removeItem("user");
   };
-  async refreshAccessToken() {
-    try{
-      const response = await axios.get("token");
-      return response.accessToken;
-    }catch(error){
-      console.log(error);
-    }
-  };
 }
 
-export default new AuthService();
+const authService = new AuthService();
+export default authService;

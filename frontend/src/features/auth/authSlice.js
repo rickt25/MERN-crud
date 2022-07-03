@@ -13,16 +13,15 @@ const initialState = {
 
 export const register = createAsyncThunk(
   "auth/register",
-  async ({ username, email, password }, thunkAPI) => {
+  async (user, thunkAPI) => {
     try {
-      const response = await AuthService.register(username, email, password);
-      return { user: data };
+      const response = await AuthService.register(user);
+      return response;
     } catch (error) {
-      console.log(error);
       const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
+      (error.response &&
+        error.response.data &&
+        error.response.data.message) ||
         error.message ||
         error.toString();
       return thunkAPI.rejectWithValue(message);
@@ -33,8 +32,8 @@ export const login = createAsyncThunk(
   "auth/login",
   async ({ email, password }, thunkAPI) => {
     try {
-      const data = await AuthService.login(email, password);
-      return { user: data };
+      const response = await AuthService.login(email, password);
+      return response;
     } catch (error) {
       const message =
         (error.response &&
@@ -65,43 +64,48 @@ const authSlice = createSlice({
     },
   },
   extraReducers: builder => {
-    builder.addCase(register.pending, (state, _) => {
-      state.isError = false;
-      state.isSuccess = false;
-      state.isLoading = true;
-    });
-    builder.addCase(register.fulfilled, (state, action) => {
-      state.isError = false;
-      state.isLoading = false;
-      state.isSuccess = true;
-      state.message = action.payload.message;
-      state.user = action.payload.user;
-    });
-    builder.addCase(register.rejected, (state, _) => {
-      state.isLoading = false;
-      state.isError = true;
-      state.user = null;
-      state.message = action.payload.message;
-    });
-    builder.addCase(login.pending, (state, _) => {
-      state.isError = false;
-      state.isSuccess = false;
-      state.isLoading = true;
-    });
-    builder.addCase(login.fulfilled, (state, action) => {
-      console.log(action);
-      state.isError = false;
-      state.isLoading = false;
-      state.isSuccess = true;
-      state.message = action.payload.message;
-      state.user = action.payload.user;
-    });
-    builder.addCase(login.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isError = true;
-      state.user = null;
-      state.message = action.payload;
-    });
+    // REGISTER REDUCER
+    builder
+      .addCase(register.pending, (state, _) => {
+        state.isError = false;
+        state.isSuccess = false;
+        state.isLoading = true;
+      })
+      .addCase(register.fulfilled, (state, action) => {
+        state.isError = false;
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.message = action.payload.message;
+        state.user = action.payload.user;
+      })
+      .addCase(register.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.user = null;
+        state.message = action.payload;
+      });
+    // LOGIN REDUCER
+    builder
+      .addCase(login.pending, (state, _) => {
+        state.isError = false;
+        state.isSuccess = false;
+        state.isLoading = true;
+      })
+      .addCase(login.fulfilled, (state, action) => {
+        state.isError = false;
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.message = action.payload.message;
+        state.user = action.payload.user;
+      })
+      .addCase(login.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.user = null;
+        state.message = action.payload;
+      })
+    // LOGOUT REDUCER
     builder.addCase(logout.fulfilled, (state, _) => {
       state.isLoading = false;
       state.isError = false;
