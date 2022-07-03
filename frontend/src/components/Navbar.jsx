@@ -1,8 +1,19 @@
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { logout, reset } from "../features/auth/authSlice";
 import SmartLink from "../components/SmartLink"
 import { Navbar as NavbarWrapper, Collapse, Nav, NavbarBrand, NavbarText, NavbarToggler, NavItem, Button } from "reactstrap";
 import logo from "../assets/images/apple-logo.png";
 
 export default function Navbar() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  function handleLogout() {
+    dispatch(logout());
+    dispatch(reset());
+  }
+
   return (
     <>
       <div>
@@ -21,7 +32,7 @@ export default function Navbar() {
               </NavItem>
             </Nav>
             <NavbarText>
-              <Button color="danger" outline>Logout</Button>
+              <Button color="danger" onClick={handleLogout} outline>Logout</Button>
             </NavbarText>
           </Collapse>
         </NavbarWrapper>
