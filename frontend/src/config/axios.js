@@ -21,11 +21,10 @@ axiosApi.interceptors.request.use(
   config => {
     if (!config.headers.Authorization) {
       const user = JSON.parse(localStorage.getItem("user"));
-      if (user && user.token) {
-        config.headers.Authorization = `Bearer ${user.token}`;
+      if (user && user.accessToken) {
+        config.headers.Authorization = `Bearer ${user.accessToken}`;
       }
     }
-
     return config;
   },
   error => Promise.reject(error)
