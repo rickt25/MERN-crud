@@ -26,7 +26,7 @@ export default function Login() {
     if (isError) {
       toast.error(message);
     }
-    dispatch(reset);
+    dispatch(reset());
   }, [user, isSuccess, isError, dispatch]);
 
   function handleChange(e){
