@@ -1,6 +1,6 @@
 import Users from "../models/UserModel.js";
 import bcrypt from "bcrypt";
-import { generateAccessToken } from "../helper/Token.js";
+import { generateAccessToken, generateRefreshToken } from "../helper/Token.js";
 
 const getUsers = async(_, res) => {
     try {
@@ -65,7 +65,6 @@ const Login = async(req, res) => {
                 email: req.body.email
             }
         });
-        console.log(user.name);
         
         if(!await bcrypt.compare(req.body.password, user.password)){
             return res.status(400).json({
@@ -80,7 +79,7 @@ const Login = async(req, res) => {
         }
 
         const accessToken = generateAccessToken(payload);
-        const refreshToken = generateAccessToken(payload);
+        const refreshToken = generateRefreshToken(payload);
         await Users.update({refresh_token: refreshToken},{
             where:{
                 id: user.id

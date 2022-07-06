@@ -1,9 +1,9 @@
-import {Sequelize} from "sequelize";
+import { Sequelize } from "sequelize";
 
-const db = new Sequelize('belajarlogin', 'root', 'password', {
+const sequelize = new Sequelize('belajarlogin', 'root', 'password', {
   host: "127.0.0.1",
   dialect: "mysql"
 });
 
-export default db;
+export default sequelize;
 
