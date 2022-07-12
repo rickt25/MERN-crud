@@ -13,10 +13,11 @@ import {
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getPosts, reset } from "../features/post/postSlice";
+import { getPosts, deletePost ,reset } from "../features/post/postSlice";
 import Loading from "../components/Loading";
 import PostForm from "../components/PostForm";
-import FormModal from "../components/FormMOdal";
+import FormModal from "../components/FormModal";
+import { toast } from "react-toastify";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -29,21 +30,17 @@ export default function Dashboard() {
     if (!user) {
       navigate('/');
     }
-
-    if(isError){
-      toast.error(message);
-    }
-
-    if(isSuccess){
-      toast
-    }
-
+    if(isError){ toast.error(message); }
+    if(isSuccess){ toast.success(message); }
     dispatch(getPosts());
-
     return() => {
       dispatch(reset());
     }
-  }, [isError, dispatch]);
+  }, [user, isError, message, dispatch]);
+
+  function handleDelete(id){
+    dispatch(deletePost(id));
+  }
 
   if(isLoading){
     return <Loading />;
@@ -85,7 +82,7 @@ export default function Dashboard() {
                       <td>{post.content}</td>
                       <td className="text-nowrap" style={{width: "1%"}}>
                         <Button color="success" size="sm" className="me-1">Edit</Button>
-                        <Button color="danger" size="sm">Delete</Button>
+                        <Button color="danger" size="sm" onClick={() => handleDelete(post.id)}>Delete</Button>
                       </td>
                     </tr>
                   ))}

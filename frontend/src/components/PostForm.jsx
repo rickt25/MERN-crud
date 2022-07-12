@@ -23,7 +23,6 @@ export default function PostForm({ id }) {
     e.preventDefault();
     validateForm();
     dispatch(insertPost({ title, content }));
-    dispatch(reset());
   }
 
   function validateForm(){

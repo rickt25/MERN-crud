@@ -20,7 +20,7 @@ class PostService{
   }
 
   async updatePost(post, id){
-    const response = await axiosApi.put("/posts" + id, {
+    const response = await axiosApi.put("/posts/" + id, {
       title: post.title,
       content: post.content
     })
@@ -28,7 +28,7 @@ class PostService{
   }
 
   async deletePost(id){
-    const response = await axiosApi.delete("/posts" + id);
+    const response = await axiosApi.delete("/posts/" + id);
     return response.data;
   }
 }
