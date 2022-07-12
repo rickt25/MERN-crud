@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Form, FormGroup, Input, Label } from "reactstrap";
-import { insertPost, reset } from "../features/post/postSlice";
+import { insertPost, reset, updatePost } from "../features/post/postSlice";
 
-export default function PostForm({ id }) {
+export default function PostForm({ formType, post }) {
   const dispatch = useDispatch();
 
   const [form, setForm] = useState({
-    title: "",
-    content: ""
+    title: post.title || "",
+    content: post.content || ""
   });
   const { title, content } = form;
 
@@ -21,8 +21,17 @@ export default function PostForm({ id }) {
 
   function handleSubmit(e){
     e.preventDefault();
-    validateForm();
-    dispatch(insertPost({ title, content }));
+    if(!validateForm()){
+      return false;
+    }
+    if(formType === "add"){
+      dispatch(insertPost({ title, content }));
+    }else if(formType === "edit"){
+      dispatch(updatePost({
+        post: { title, content }, 
+        id: post.id
+      }));
+    }
   }
 
   function validateForm(){
@@ -34,7 +43,7 @@ export default function PostForm({ id }) {
   }
 
   return (
-    <Form onSubmit={(e) => handleSubmit(e)} id={id}>
+    <Form onSubmit={(e) => handleSubmit(e)} id="postForm">
       <FormGroup className="mb-2">
         <Label className="me-sm-2" for="title">
           Title

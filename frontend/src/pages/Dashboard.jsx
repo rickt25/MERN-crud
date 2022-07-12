@@ -10,7 +10,7 @@ import {
   Row,
   Table,
 } from "reactstrap";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getPosts, deletePost ,reset } from "../features/post/postSlice";
@@ -20,6 +20,13 @@ import FormModal from "../components/FormModal";
 import { toast } from "react-toastify";
 
 export default function Dashboard() {
+  const [modal, setModal] = useState({
+    isOpen: false,
+    title: ""
+  });
+  const [formType, setFormType] = useState("");
+  const [post, setPost] = useState({});
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -38,8 +45,33 @@ export default function Dashboard() {
     }
   }, [user, isError, message, dispatch]);
 
+  function handleAdd(){
+    setFormType("add");
+    setPost({});
+    setModal({
+      isOpen: true,
+      title: "Add Post",
+    });
+  }
+
+  function handleEdit(id){
+    setFormType("edit");
+    setPost(posts.find((post) => post.id === id));
+    setModal({
+      isOpen: true,
+      title: "Edit Post"
+    });
+  }
+
   function handleDelete(id){
     dispatch(deletePost(id));
+  }
+
+  function toggleModal(){
+    setModal(prevState => ({
+      ...prevState,
+      isOpen: !prevState.isOpen
+    }));
   }
 
   if(isLoading){
@@ -60,9 +92,9 @@ export default function Dashboard() {
                   </CardSubtitle>
                 </Col>
                 <Col className="col-auto">
-                  <FormModal color="primary" label="Add New" title="Create Post" formId="createPost">
-                    <PostForm id="createPost" />
-                  </FormModal>
+                  <Button color="primary" onClick={handleAdd}>
+                    Add Post
+                  </Button>
                 </Col>
               </Row>
               <Table striped>
@@ -81,7 +113,7 @@ export default function Dashboard() {
                       <td>{post.title}</td>
                       <td>{post.content}</td>
                       <td className="text-nowrap" style={{width: "1%"}}>
-                        <Button color="success" size="sm" className="me-1">Edit</Button>
+                        <Button color="success" size="sm" className="me-1" onClick={() => handleEdit(post.id)}>Edit</Button>
                         <Button color="danger" size="sm" onClick={() => handleDelete(post.id)}>Delete</Button>
                       </td>
                     </tr>
@@ -91,6 +123,9 @@ export default function Dashboard() {
             </CardBody>
           </Card>
         </Container>
+        <FormModal isOpen={modal.isOpen} title={modal.title} id="postForm" toggleModal={toggleModal}>
+          <PostForm formType={formType} post={post} />
+        </FormModal>
       </DashboardLayout>
     </>
   );

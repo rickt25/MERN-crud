@@ -66,10 +66,11 @@ export const insertPost = createAsyncThunk(
 
 export const updatePost = createAsyncThunk(
   "posts/updatePost",
-  async ({ post, id }, thunkAPI) => {
+  async ({post, id}, thunkAPI) => {
     try {
       const response = await PostService.updatePost(post, id);
-      return response.data;
+      console.log(response);
+      return response;
     } catch (error) {
       const message =
         (error.response &&
@@ -165,7 +166,7 @@ export const postSlice = createSlice({
       .addCase(updatePost.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.post = action.payload;
+        state.message = action.payload.message;
       })
       .addCase(updatePost.rejected, (state, action) => {
         state.isLoading = false;
