@@ -1,5 +1,4 @@
-import axiosApi from "config/axios";
-
+import axiosApi from '../../config/axios.js';
 
 class PostService{
   async getPosts(){

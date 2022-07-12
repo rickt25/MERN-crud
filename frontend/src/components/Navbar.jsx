@@ -12,6 +12,7 @@ export default function Navbar() {
   function handleLogout() {
     dispatch(logout());
     dispatch(reset());
+    navigate("/");
   }
 
   return (

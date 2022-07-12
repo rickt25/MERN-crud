@@ -15,7 +15,7 @@ export const getPosts = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const response = await PostService.getPosts();
-      return response.data;
+      return response;
     } catch (error) {
       const message =
         (error.response &&
@@ -51,6 +51,7 @@ export const insertPost = createAsyncThunk(
   async (post, thunkAPI) => {
     try {
       const response = await PostService.insertPost(post);
+      thunkAPI.dispatch(getPosts());
       return response.data;
     } catch (error) {
       const message =
@@ -69,6 +70,7 @@ export const updatePost = createAsyncThunk(
   async ({ post, id }, thunkAPI) => {
     try {
       const response = await PostService.updatePost(post, id);
+      thunkAPI.dispatch(getPosts());
       return response.data;
     } catch (error) {
       const message =
@@ -87,6 +89,7 @@ export const deletePost = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const response = await PostService.deletePost(id);
+      thunkAPI.dispatch(getPosts());
       return response.data;
     } catch (error) {
       const message =
@@ -104,9 +107,15 @@ export const postSlice = createSlice({
   name: 'post',
   initialState,
   reducers: {
-    reset: (state) => initialState,
+    reset: (state) => {
+      state.isError = false,
+      state.isSuccess = false,
+      state.isLoading = false,
+      state.message = ''
+    },
   },
   extraReducers: (builder) => {
+    // GET POSTS
     builder
       .addCase(getPosts.pending, (state) => {
         state.isError = false;
@@ -117,34 +126,33 @@ export const postSlice = createSlice({
         state.isError = false;
         state.isLoading = false;
         state.isSuccess = true;
-        state.message = action.payload.message;
-        state.posts = action.payload.posts;
+        state.posts = action.payload;
       })
       .addCase(getPosts.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;
-        state.message = action.payload.message;
+        state.message = action.payload;
       });
+    // INSERT POSTS
     builder
       .addCase(insertPost.pending, (state) => {
         state.isError = false;
         state.isSuccess = false;
         state.isLoading = true;
       })
-      .addCase(insertPost.fulfilled, (state, action) => {
+      .addCase(insertPost.fulfilled, (state, _) => {
         state.isError = false;
         state.isLoading = false;
         state.isSuccess = true;
-        state.message = action.payload.message;
-        state.posts = action.payload.posts;
       })
       .addCase(insertPost.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;
-        state.message = action.payload.message;
+        state.message = action.payload;
       });
+    // FIND POST
     builder
       .addCase(findPost.pending, (state) => {
         state.isError = false;
@@ -155,15 +163,15 @@ export const postSlice = createSlice({
         state.isError = false;
         state.isLoading = false;
         state.isSuccess = true;
-        state.message = action.payload.message;
-        state.post = action.payload.post;
+        state.post = action.payload;
       })
       .addCase(findPost.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;
-        state.message = action.payload.message;
+        state.message = action.payload;
       });
+    // UPDATE POSTS
     builder
       .addCase(updatePost.pending, (state) => {
         state.isError = false;
@@ -174,15 +182,15 @@ export const postSlice = createSlice({
         state.isError = false;
         state.isLoading = false;
         state.isSuccess = true;
-        state.message = action.payload.message;
-        state.post = action.payload.post;
+        state.post = action.payload;
       })
       .addCase(updatePost.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;
-        state.message = action.payload.message;
+        state.message = action.payload;
       });
+    // DELETE POST
     builder
       .addCase(deletePost.pending, (state) => {
         state.isError = false;
@@ -193,13 +201,16 @@ export const postSlice = createSlice({
         state.isError = false;
         state.isLoading = false;
         state.isSuccess = true;
-        state.message = action.payload.message;
+        state.message = action.payload;
       })
       .addCase(deletePost.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;
-        state.message = action.payload.message;
+        state.message = action.payloads;
       });
   }
 })
+
+export const { reset } = postSlice.actions;
+export default postSlice.reducer;

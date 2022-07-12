@@ -67,21 +67,16 @@ const authSlice = createSlice({
     // REGISTER REDUCER
     builder
       .addCase(register.pending, (state, _) => {
-        state.isError = false;
-        state.isSuccess = false;
         state.isLoading = true;
       })
       .addCase(register.fulfilled, (state, action) => {
-        state.isError = false;
         state.isLoading = false;
         state.isSuccess = true;
-        state.message = action.payload.message;
         state.user = action.payload.user;
       })
       .addCase(register.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
-        state.isSuccess = false;
         state.user = null;
         state.message = action.payload;
       });
@@ -100,8 +95,9 @@ const authSlice = createSlice({
         state.user = action.payload.user;
       })
       .addCase(login.rejected, (state, action) => {
-        state.isLoading = false;
         state.isError = true;
+        state.isLoading = false;
+        state.isSuccess = false;
         state.user = null;
         state.message = action.payload;
       })
