@@ -69,7 +69,6 @@ export const updatePost = createAsyncThunk(
   async ({ post, id }, thunkAPI) => {
     try {
       const response = await PostService.updatePost(post, id);
-      // thunkAPI.dispatch(getPosts());
       return response.data;
     } catch (error) {
       const message =
