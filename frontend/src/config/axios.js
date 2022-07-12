@@ -10,10 +10,9 @@ const axiosApi = axios.create({
 const refreshAccessToken = async () => {
   try{
     const response = await axiosApi.get("token");
-    console.log(response);
     return response;
   }catch(error){
-    console.log(error);
+    console.log("error nich: " + error);
   }
 }
 
@@ -36,10 +35,15 @@ axiosApi.interceptors.response.use(
   }, async function (error) {
   const originalRequest = error.config;
   if (error.response.status === 403 && !originalRequest._retry) {
+    console.log("retrying");
     originalRequest._retry = true;
-    const access_token = await refreshAccessToken();            
+    const access_token = await refreshAccessToken();
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + access_token;
     return axiosApi(originalRequest);
+  }
+  if(error.response.status === 401){
+    localStorage.clear();
+    window.location.href = "/";
   }
   return Promise.reject(error);
 });
