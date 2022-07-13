@@ -1,7 +1,12 @@
 import { Sequelize } from "sequelize";
 
-const sequelize = new Sequelize('belajarlogin', 'root', 'password', {
-  host: "127.0.0.1",
+const dbName = process.env.DB_NAME;
+const user = process.env.DB_USER;
+const password = process.env.DB_PASSWORD;
+const host = process.env.DB_HOST;
+
+const sequelize = new Sequelize(dbName, user, password, {
+  host: host,
   dialect: "mysql"
 });
 
